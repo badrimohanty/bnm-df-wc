@@ -1,5 +1,5 @@
 # FROM python:3.11-slim AS build
-FROM gcr.io/dataflow-templates-base/python311-template-launcher-base@sha256:769c5c5f877830cff520974ec9f43d0921a12ad3a16db35d5c7c0db2002d5c14
+FROM gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00
 WORKDIR /app
 
 # COPY the script and dependencies
