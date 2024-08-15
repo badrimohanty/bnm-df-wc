@@ -7,13 +7,13 @@ WORKDIR /app
 COPY . .
 
 # Update the OS packages
-#RUN apt update \
-#    && apt upgrade \
-#    && apt install curl -y \
+RUN apt update \
+    && apt upgrade \
+    && apt install curl -y \
 # This removes packages that can no longer be downloaded
-#    && apt autoclean -y \ 
+    && apt autoclean -y \ 
 # This removes dependencies of packages that are no longer installed
-#    && apt autoremove -y
+    && apt autoremove -y
 
 # - vg - unclear why we don't just use the base image above?
 # COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
