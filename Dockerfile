@@ -20,7 +20,7 @@ RUN apt update \
 # Update the OS packages
 RUN pip install --upgrade pip
 RUN apt-get install default-jdk -y
-RUN pip install apache-beam[gcp]==2.57.0
+#RUN pip install apache-beam[gcp]==2.57.0
 RUN pip install -r requirements.txt
 RUN pip -V \
     && python -V
