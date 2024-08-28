@@ -1,9 +1,12 @@
-# FROM python:3.11-slim AS build
-# FROM gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00
-FROM gcr.io/dataflow-templates-base/python311-template-launcher-base:20231225-rc00
+FROM python:3.11-slim AS build
+#COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
+
+RUN mkdir -p /app/src
+
 WORKDIR /app
 
-# COPY the script and dependencies
+
+# COPY the oracle jar , script and dependencies
 COPY . .
 
 # Update the OS packages
@@ -15,13 +18,13 @@ RUN apt update \
 # This removes dependencies of packages that are no longer installed
     && apt autoremove -y
 
-# - vg - unclear why we don't just use the base image above?
-# COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
+
+COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
 
 # Update the OS packages
 RUN pip install --upgrade pip
 RUN apt-get install default-jdk -y
-#RUN pip install apache-beam[gcp]==2.57.0
+RUN pip install apache-beam[gcp]==2.57.0
 RUN pip install -r requirements.txt
 RUN pip -V \
     && python -V
@@ -37,21 +40,15 @@ RUN chmod g+s /app \
   && chmod g+rx /app/* \
   && chown -R container-user:container-user /app
 
-RUN chmod g+s /opt/google/dataflow/python_template_launcher \
-  && chown -R container-user:container-user /opt/google/dataflow/python_template_launcher
-
-RUN chmod g+s /var/log \
-  && chmod -R 777 /var/log \
-  && chown -R container-user:container-user /var/log
-
-
 USER container-user
 RUN whoami
 
 WORKDIR /app/src
 
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/wordcount_flex_template.py"
-ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="${WORKDIR}/requirements.txt"
+#ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="${WORKDIR}/requirements.txt"
 
 # Set the entrypoint to Apache Beam SDK launcher.
-ENTRYPOINT ["/opt/apache/beam/boot"]
+ENTRYPOINT ["/opt/google/dataflow/python_template_launcher"]
+
+
