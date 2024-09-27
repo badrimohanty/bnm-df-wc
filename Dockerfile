@@ -49,6 +49,6 @@ ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/wordcount_flex_template.py"
 #ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="${WORKDIR}/requirements.txt"
 
 # Set the entrypoint to Apache Beam SDK launcher.
-ENTRYPOINT ["/opt/google/dataflow/python_template_launcher"]
-
+#ENTRYPOINT ["/opt/google/dataflow/python_template_launcher"]
+ENTRYPOINT ["/opt/apache/beam/boot"]
 
