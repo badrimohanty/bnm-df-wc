@@ -42,6 +42,15 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     word_count_options = pipeline_options.view_as(WordCountOptions)
 
+   with Pipeline() as pipeline:
+  env_var_value = (
+      pipeline
+      | 'Create' >> beam.Create([''])
+      | 'Get Env Var' >> beam.Map(lambda _: os.environ['LD_LIBRARY_PATH'])
+      | 'Print' >> beam.Map(print)
+  ) 
+    
+    
     with Pipeline(options=pipeline_options) as p:
         (
             p
