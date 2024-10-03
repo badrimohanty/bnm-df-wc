@@ -52,4 +52,5 @@ ENV FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE="${WORKDIR}/requirements.txt"
 ENV LD_LIBRARY_PATH="${WORKDIR}/packages/oracle_client"
 
 # Set the entrypoint to Apache Beam SDK launcher.
-ENTRYPOINT ["/opt/apache/beam/boot"]
+#ENTRYPOINT ["/opt/apache/beam/boot"]
+ENTRYPOINT ["/opt/google/dataflow/python_template_launcher"]
