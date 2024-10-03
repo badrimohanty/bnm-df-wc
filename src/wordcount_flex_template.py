@@ -1,9 +1,11 @@
 import argparse
 import logging
 import re
-from apache_beam import Pipeline, PTransform, DoFn, ParDo, CombinePerKey, Map
+import os
+from apache_beam import Pipeline, PTransform, DoFn, ParDo, CombinePerKey, Map, Create
 from apache_beam.io import ReadFromText, WriteToText
 from apache_beam.options.pipeline_options import PipelineOptions, SetupOptions
+
 
 class WordCountOptions(PipelineOptions):
     @classmethod
@@ -20,7 +22,7 @@ class WordCountOptions(PipelineOptions):
 
 class ExtractWordsFn(DoFn):
     def process(self, element):
-        return re.findall(r'[\w\']+', element, re.UNICODE)
+        return re.findall(r"[\w\']+", element, re.UNICODE)
 
 
 class CountWords(PTransform):
@@ -30,7 +32,8 @@ class CountWords(PTransform):
             | "ExtractWords" >> ParDo(ExtractWordsFn())
             | "PairWithOne" >> Map(lambda x: (x, 1))
             | "GroupAndSum" >> CombinePerKey(sum)
-            | "FormatOutput" >> ParDo(lambda word_count: f"{word_count[0]}: {word_count[1]}")
+            | "FormatOutput"
+            >> ParDo(lambda word_count: f"{word_count[0]}: {word_count[1]}")
         )
 
 
@@ -42,15 +45,14 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     word_count_options = pipeline_options.view_as(WordCountOptions)
 
-   with Pipeline() as pipeline:
-  env_var_value = (
-      pipeline
-      | 'Create' >> beam.Create([''])
-      | 'Get Env Var' >> beam.Map(lambda _: os.environ['LD_LIBRARY_PATH'])
-      | 'Print' >> beam.Map(print)
-  ) 
-    
-    
+    with Pipeline() as pipeline:
+        env_var_value = (
+            pipeline
+            | "Create" >> Create([""])
+            | "Get Env Var" >> Map(lambda _: os.environ["LD_LIBRARY_PATH"])
+            | "Print" >> Map(print)
+        )
+
     with Pipeline(options=pipeline_options) as p:
         (
             p
